@@ -1,30 +1,8 @@
 const cron = require('cron');
 const sendSms = require('./twilio');
 const axios = require('axios');
-// const express = require('express');
-// const path = require('path');
-// const Fetch = require('./fetch');
-// const ft = new Fetch();
-// Global var
 
 const port = 3000;
-
-// let quote_job;
-// const seweather = await ft.getEgyptWeather(;
-// 	const message = `The weather is ${temperature} right now in Egypt.`ndWeather = async () => {
-// 	const messagen;
-// 	const = `The weather is ${temperature} right now in Egypt.`r = await ft.getEgyptWeather();
-// 	consolemessage);
-// 	quote_job = cron.CronJob(
-// 		'0/10 * * * * *',
-// 		() => {
-// 			sendSms(process.env.MY_NUMBER, weather.data.main.temp);
-// 		},
-// 		null,
-// 		true,
-// 		'America/Los_Angeles'
-// 	);
-// };
 
 let my_job;
 const sendMessage = message => {
@@ -82,5 +60,31 @@ async function getCovidStats() {
 	sendSms(process.env.MY_NUMBER, message);
 }
 
-getWeather();
-getCovidStats();
+async function getMyTodos() {
+	const data = await axios.get(
+		'https://api.trello.com/1/lists/601a4dbf619e6c2ba5b205ce/cards?key=a387dd7b861b7f77544a9ed0afbec223&token=97bc38d7160c6faf2e076f8b81a6d0e8e30bd3a7129e4fd5035502204bc48929'
+	);
+	// arrray of objects
+	const todosToday = data.data;
+	let message = '';
+	todosToday.forEach((todo, index) => {
+		let task = `\n${index + 1}) ${todo.name}`;
+		message += task;
+		console.log(message);
+	});
+	sendSms(process.env.MY_NUMBER, message);
+}
+
+// getWeather();
+// getCovidStats();
+getMyTodos();
+
+// trello apiKey a387dd7b861b7f77544a9ed0afbec223
+// token 97bc38d7160c6faf2e076f8b81a6d0e8e30bd3a7129e4fd5035502204bc48929
+// GET boards https://api.trello.com/1/boards/9mw8XF70/memberships?key=a387dd7b861b7f77544a9ed0afbec223&token=97bc38d7160c6faf2e076f8b81a6d0e8e30bd3a7129e4fd5035502204bc48929
+// GET cars https://api.trello.com/1/cards?key=a387dd7b861b7f77544a9ed0afbec223&token=97bc38d7160c6faf2e076f8b81a6d0e8e30bd3a7129e4fd5035502204bc48929
+// get all lists https://api.trello.com/1/boards/9mw8XF70/lists?key=a387dd7b861b7f77544a9ed0afbec223&token=97bc38d7160c6faf2e076f8b81a6d0e8e30bd3a7129e4fd5035502204bc48929
+// todo today list id 601a4dbf619e6c2ba5b205ce
+// todo list id 55799793131a423593ddfdb3
+// get todo list by id https://api.trello.com/1/lists/55799793131a423593ddfdb3?key=a387dd7b861b7f77544a9ed0afbec223&token=97bc38d7160c6faf2e076f8b81a6d0e8e30bd3a7129e4fd5035502204bc48929
+// get all cards in my todo https://api.trello.com/1/lists/55799793131a423593ddfdb3/cards?key=a387dd7b861b7f77544a9ed0afbec223&token=97bc38d7160c6faf2e076f8b81a6d0e8e30bd3a7129e4fd5035502204bc48929
