@@ -1,43 +1,30 @@
-const path = require('path');
-const express = require('express');
-
-const bodyParser = require('body-parser');
-const sendSms = require('./twilio');
 const cron = require('cron');
-const Fetch = require('./fetch');
-
-const ft = new Fetch();
-
+const sendSms = require('./twilio');
+const axios = require('axios');
+// const express = require('express');
+// const path = require('path');
+// const Fetch = require('./fetch');
+// const ft = new Fetch();
 // Global var
+
 const port = 3000;
 
-let quote_job;
-const sendWeather = async () => {
-	const data = await ft.getEgyptWeather();
-	quote_job = new cron.CronJob(
-		'0/10 * * * * *',
-		() => {
-			let temp_text;
-			temp_c = data.data.current.temp_c;
-			condition = data.data.current.condition.text;
-			if (temp_c > 20) {
-				temp_text = 'ya3ni 7arr ya zmele';
-			} else if (temp_c < 14) {
-				temp_text = 'brrrd ya zmeelee brdddd';
-			} else if (temp_c < 20 && temp_c > 14) {
-				temp_text = 'w kollo f el lolo';
-			} else {
-				temp_text = 'eshkorny yasta 3l m3lomat el gamda de';
-			}
-			let temp = `daraget el 7rara dlw2ty ${temp_c}C ${temp_text} w ${condition}`;
-			sendSms(process.env.MY_NUMBER, temp);
-			console.log(temp);
-		},
-		null,
-		true,
-		'America/Los_Angeles'
-	);
-};
+// let quote_job;
+// const seweather = await ft.getEgyptWeather(;
+// 	const message = `The weather is ${temperature} right now in Egypt.`ndWeather = async () => {
+// 	const messagen;
+// 	const = `The weather is ${temperature} right now in Egypt.`r = await ft.getEgyptWeather();
+// 	consolemessage);
+// 	quote_job = cron.CronJob(
+// 		'0/10 * * * * *',
+// 		() => {
+// 			sendSms(process.env.MY_NUMBER, weather.data.main.temp);
+// 		},
+// 		null,
+// 		true,
+// 		'America/Los_Angeles'
+// 	);
+// };
 
 let my_job;
 const sendMessage = message => {
@@ -53,20 +40,47 @@ const sendMessage = message => {
 	);
 };
 
-// app.post('/', (req, res) => {
-// 	const message = req.body.message;
+// sendWeather();
 
-// 	if (my_job) {
-// 		my_job.stop();
-// 	}
-// 	sendMessage(message);
+// cron job that excutes every 24 hours
+// cron job that excutes at 12 pm (Covid)
+// cron job that excutes at 1 pm (Quote)
+// cron job that excutes every 4 hours (Weather)
 
-// 	res.send('successfuly sent');
-// });
+// function sends the weather as sms
+// function sends the covid as sms
+// function sends the quote as sms
+async function getWeather() {
+	const API_KEY = '35efb4128ba9902e1e91a7e3a6b98dbd';
+	try {
+		const weather = await axios.get(
+			`http://api.openweathermap.org/data/2.5/weather?q=Egypt&units=imperial&appid=${API_KEY}`
+		);
+		const temperature = weather.data.main.temp;
+		const message = `The weather is ${temperature} right now in Egypt.`;
+		sendSms(process.env.MY_NUMBER, message);
+		return;
+	} catch (e) {
+		console.log(e);
+	}
+}
 
-// app.listen(3000, () => {
-// 	console.log(`Server running on port ${port}`);
-// });
+async function getCovidStats() {
+	const stats = await axios.get(
+		'https://covid19.mathdro.id/api/countries/egypt'
+	);
+	const { confirmed, recovered, deaths } = stats.data;
+	const confirmedPeople = confirmed.value;
+	const recoverdPeople = recovered.value;
+	const deathsPeople = deaths.value;
+	const message = `Covid-19 stats in Egypt today .. 
+	${confirmedPeople} are confirmed
+	${recoverdPeople} are recovered
+	${deathsPeople} died
+	`;
 
-// calling my automated jobs
-sendWeather();
+	sendSms(process.env.MY_NUMBER, message);
+}
+
+getWeather();
+getCovidStats();
