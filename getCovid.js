@@ -1,3 +1,4 @@
+const axios = require('axios');
 module.exports = {
 	// GET covid stats
 	getCovidStats: async () => {

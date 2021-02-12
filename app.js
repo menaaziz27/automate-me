@@ -9,9 +9,9 @@ const { getMyTodos } = require('./getTodos');
 
 // at 11 am everyday (weather)
 weatherJob = new cron.CronJob(
-	'0 0 1 * * *',
-	() => {
-		const weather = getWeather();
+	'0 1 * * *',
+	async () => {
+		const weather = await getWeather();
 		sendSms(process.env.MY_NUMBER, weather);
 	},
 	null,
@@ -22,8 +22,8 @@ weatherJob = new cron.CronJob(
 // every 8 hours (Todos)
 todosJob = new cron.CronJob(
 	'0 */8 * * *',
-	() => {
-		const myTodos = getMyTodos();
+	async () => {
+		const myTodos = await getMyTodos();
 		sendSms(process.env.MY_NUMBER, myTodos);
 	},
 	null,
@@ -33,9 +33,9 @@ todosJob = new cron.CronJob(
 
 // at 12 pm everyday (covid)
 covidJob = new cron.CronJob(
-	'0 0 2 * * *',
-	() => {
-		const covidStats = getCovidStats();
+	'0 2 * * *',
+	async () => {
+		const covidStats = await getCovidStats();
 		sendSms(process.env.MY_NUMBER, covidStats);
 	},
 	null,
@@ -45,9 +45,9 @@ covidJob = new cron.CronJob(
 
 // at 5 pm everyday (Quote)
 quoteJob = new cron.CronJob(
-	'0 0 7 * * *',
-	() => {
-		const quote = getQuote();
+	'0 7 * * *',
+	async () => {
+		const quote = await getQuote();
 		sendSms(process.env.MY_NUMBER, quote);
 	},
 	null,
