@@ -1,6 +1,7 @@
 const cron = require('cron');
 const sendSms = require('./twilio');
 require('dotenv').config();
+const app = require('express')();
 
 const { getCovidStats } = require('./getCovid');
 const { getQuote } = require('./getQuote');
@@ -54,3 +55,8 @@ quoteJob = new cron.CronJob(
 	true,
 	'America/Los_Angeles'
 );
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+	console.log(`server listening on port: ${PORT}`);
+});
