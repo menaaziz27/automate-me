@@ -1,6 +1,5 @@
 const cron = require('cron');
 const sendSms = require('./twilio');
-const axios = require('axios');
 require('dotenv').config();
 
 const { getCovidStats } = require('./getCovid');
